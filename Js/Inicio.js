@@ -53,9 +53,9 @@ $(document).ready(function () {
 
     $('#9-82 a').on('click',function(){
       $('section.content').load('filtro_s.php');
-      $('#titulo').text('Resumen de desempeño semanal Vendedor');
+      $('#titulo').text('Resumen de desempeño semanal 2Vendedor');
       sbs = $('#subsidiaria').val();
-      pagina = 'rdst';
+      pagina = 'rdst2';
     });
     
     $('#9-83 a').on('click',function(){
@@ -81,13 +81,12 @@ $(document).ready(function () {
     });
 
     
-    $('#9-85 a').on('click',function(){
-      $('section.content').load('filtro_s.php');
-      $('#titulo').text('Resumen de desempeño semanal Cadena');
-      sbs = $('#subsidiaria').val();
-      pagina = 'rtmt';
+    $('#9-86 a').on('click',function(){
+      $('section.content').load('supervision/metas.php');
+      $('#titulo').text('asignacion metas');
+      // sbs = $('#subsidiaria').val();
+      pagina = 'metas';
     });
-
 
     $('#9-88 a').on('click',function(){
       $('section.content').load('supervision/crudUsuario.php');

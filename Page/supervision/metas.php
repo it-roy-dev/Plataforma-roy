@@ -1,93 +1,89 @@
-<?php
-require_once "../../Funsiones/global.php";
-?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Horas</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Registro de Horas Semanal</h2>
+    <form method="POST" action="">
+        <label for="fecha_inicio">Fecha de Inicio de Semana:</label>
+        <input type="date" name="fecha_inicio" id="fecha_inicio" required>
+        <br><br>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Fecha</th>
+                <th>Hora de Entrada</th>
+                <th>Hora de Salida</th>
+                <th>Horas Trabajadas</th>
+            </tr>
+            <?php
+                $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                $totalHoras = 0;
 
-<div id="filtros">
-		<form>
-			<table class="fila">
-				<tr>
-					<td>Ingrese tienda: </td>
-					<td>
-						<input class="form-control" type="number" name="tienda" id="tienda"  placeholder="Ingrese numero de tienda">
-					</td>
-					<td>Ingrese fecha: </td>
-					<td>
-						<input class="form-control controles" type="date" id="fecha" name="fecha">
-					</td>
-					<td>
-						<button type="button" class="btn btn-primary controles" onclick="AsigMetaSemana()"> <i class="fas fa-search"></i> Ejecutar</button>
-					</td>
-				</tr>
-			</table>
-		</form>
-	</div>
-	<div id="contenido1" class="container"></div>
+                if (isset($_POST['fecha_inicio'])) {
+                    $fechaInicio = $_POST['fecha_inicio'];
+                } else {
+                    $fechaInicio = date('Y-m-d');
+                }
 
-  
-    </div>
-    <div class="form-row">
-      <div class="col">
-        <label for="tipoDeposito">Tipo de corte</label>
-        <select class="form-control" name="tipoDeposito" id="tipoDeposito" required>
-          <option selected></option>
-          <?php listadoTipoDeposito() ?>
-        </select>
-      </div>
-      <div class="col">
-        <label for="bancoDeposito">Banco</label>
-        <select class="form-control" name="bancoDeposito" id="bancoDeposito" required>
-          <option selected></option>
-          <?php listadoBanco() ?>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col">
-        <label for="noDeposito">No boleta</label>
-        <input type="text" class="form-control" name="noDeposito" id="noDeposito" required>
-      </div>
-      <div class="col">
-        <label for="montoDeposito">Monto</label>
-        <input type="text" class="form-control" name="montoDeposito" id="montoDeposito" required>
-      </div>
-    </div>
-    <div class="form-row comentario">
-      <div class="col">
-        <label for="comentario">Comentario</label>
-        <textarea class="form-control" name="comentario" id="comentario" cols="30" rows="3"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-danger" data-dismiss="modal"> <i class="fas fa-ban"></i> Cancelar</button>
-      <button type="submit" class="btn btn-primary" id="btnOkModalDeposito"></button>
-    </div>
-  </form>
-  <table id="tblDeposito" class="table table-sm table-hover">
-    <thead>
-      <th>No</th>
-      <th>Fecha</th>
-      <th>Tienda</th>
-      <th>Tipo</th>
-      <th>Boleta</th>
-      <th>Monto</th>
-      <th>Banco</th>
-    </thead>
+                foreach ($dias as $index => $dia) {
+                    $fechaDia = date('Y-m-d', strtotime("$fechaInicio +$index days"));
+                    echo "<tr>";
+                    echo "<td>$dia</td>";
+                    echo "<td>$fechaDia</td>";
+                    echo "<td><input type='time' name='entrada[]' required></td>";
+                    echo "<td><input type='time' name='salida[]' required></td>";
+                    echo "<td id='horas_$index'>0</td>";
+                    echo "</tr>";
+                }
+            ?>
+            <tr>
+                <td colspan="4"><strong>Total de Horas</strong></td>
+                <td id="totalHoras">0</td>
+            </tr>
+        </table>
+        <br>
+        <button type="submit" name="calcular">Calcular Total</button>
+    </form>
 
-    <tbody>
-    </tbody>
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $entradas = $_POST['entrada'];
+        $salidas = $_POST['salida'];
 
-    <tfoot>
-      <th>No</th>
-      <th>Fecha</th>
-      <th>Tienda</th>
-      <th>Tipo</th>
-      <th>Boleta</th>
-      <th>Monto</th>
-      <th>Banco</th>
-    </tfoot>
-  </table>
-</div>
-<script>
-  var url = "../Js/tienda/deposito.js";
-  $.getScript(url);
-</script>
+        echo '<script>';
+        foreach ($entradas as $index => $entrada) {
+            $salida = $salidas[$index];
+            $horasTrabajadas = (strtotime($salida) - strtotime($entrada)) / 3600; // convertir a horas
+
+            // Verificar si el cálculo de horas es negativo (entrada después de salida)
+            if ($horasTrabajadas < 0) {
+                $horasTrabajadas += 24; // Ajuste para casos donde la salida es después de medianoche
+            }
+
+            $totalHoras += $horasTrabajadas;
+            echo "document.getElementById('horas_$index').textContent = $horasTrabajadas.toFixed(2);";
+        }
+        echo "document.getElementById('totalHoras').textContent = $totalHoras.toFixed(2);";
+        echo '</script>';
+    }
+    ?>
+</body>
+</html>
