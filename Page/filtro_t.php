@@ -17,7 +17,6 @@ require_once "../Funsiones/global.php";
         </select>
       </div>
       <!-- /.input group -->
-
     </div>
     <div class="form-group">
       <div class="input-group">

@@ -2,7 +2,6 @@
     session_start();
     require_once "conexion.php";
 
-
     function consulta($op, $query){
         switch ($op) {
             case 1:

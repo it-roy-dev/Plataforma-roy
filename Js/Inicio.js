@@ -50,12 +50,12 @@ $(document).ready(function () {
       sbs = $('#subsidiaria').val();
       pagina = 'vts14';
     });
-
+//TESTING
     $('#9-82 a').on('click',function(){
       $('section.content').load('filtro_s.php');
-      $('#titulo').text('Resumen de desempeño semanal 2Vendedor');
+      $('#titulo').text('Resumen de desempeño semanal Vendedor TEST');
       sbs = $('#subsidiaria').val();
-      pagina = 'rdst2';
+      pagina = 'rdst';
     });
     
     $('#9-83 a').on('click',function(){
@@ -80,13 +80,22 @@ $(document).ready(function () {
       pagina = 'rtmt';
     });
 
+    $('#9-86 a').on('click',function(){
+      $('section.content').load('metas.php');
+      $('#titulo').text('Asignacion de Metas TEST');
+      sbs = $('#Tiendas').val();
+      pagina = 'metas';
+    });
     
+
+
+/*     
     $('#9-86 a').on('click',function(){
       $('section.content').load('supervision/metas.php');
       $('#titulo').text('asignacion metas');
       // sbs = $('#subsidiaria').val();
       pagina = 'metas';
-    });
+    }); */
 
     $('#9-88 a').on('click',function(){
       $('section.content').load('supervision/crudUsuario.php');

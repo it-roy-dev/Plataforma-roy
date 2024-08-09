@@ -1,6 +1,20 @@
 <?php
 require_once "../Funsiones/global.php";
 ?>
+<nav class="navbar navbar-light bg-light justify-content-center">
+
+    <div class="form-group mx-2">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fas fa-building"></i>
+          </span>
+        </div>
+        <select name="sbs" onchange="">
+        <option value="">tiendas...</option>
+        <?php echo Tiendas() ?>
+        </select>
+      </div>
 <!-- <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
