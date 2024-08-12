@@ -6,7 +6,7 @@
         $query ="SELECT id,numero FROM departamento WHERE departamento = 'Tienda'";
         $tienda = consulta(1, $query);
         foreach ($tienda as $key) {
-          echo  "<option value=" . $key[0] . ">Tienda -" . $key[1] . "</option>";
+          echo  "<option value=" . $key[0] . ">Tienda " . $key[1] . "</option>";
         }
     }
 
@@ -76,13 +76,13 @@
                 break;
         }
     }
-    function Tiendas(){
+ /*    function Tiendas(){
       $query = "SELECT id, departamento FROM departamento ";  
       $sbs = consulta(1, $query);
       foreach ($sbs as $key) {
         echo  "<option value=" . $key[0] . ">" . $key[0] .' - '. $key[1] . "</option>";
       }
-    }
+    } */
 
     function buscarTienda($departamento_id){
       $query = "SELECT numero FROM departamento WHERE id = $departamento_id";

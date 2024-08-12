@@ -12,10 +12,15 @@ require_once "../Funsiones/global.php";
         </div>
         <select name="sbs" onchange="">
         <option value="">tiendas...</option>
-        <?php echo Tiendas() ?>
+        <?php echo listadoTienda() ?>
         </select>
       </div>
-<!-- <head>
+
+
+</html>
+
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Horas</title>
@@ -63,7 +68,7 @@ require_once "../Funsiones/global.php";
             } else if (value.length === 4) {
                 value = value.substr(0, 2) + ':' + value.substr(2, 2);
             }
-            
+                // Validar que las horas no sean mayores a 24
             var parts = value.split(':');
             if (parseInt(parts[0]) > 24) {
                 alert('La hora no puede ser mayor a 24.');
@@ -111,11 +116,11 @@ require_once "../Funsiones/global.php";
             document.getElementById(`totalHoras_${codigo}`).innerText = total.toFixed(2);
         }
     </script>
-</head> -->
+</head>
 <body>
 
-
-
+    <h2>Registro de Horas Semanal</h2>
+    <form method="POST" action="">
         <table>
             <thead>
                 <tr>
@@ -134,37 +139,26 @@ require_once "../Funsiones/global.php";
             </thead>
             <tbody>
                 <?php
-             /*    $sbs = 1;  // Reemplaza con tu valor real
-                $t = "'Tienda1', 'Tienda2'";  // Reemplaza con tu valor real
-                $emp = 'Empleado1';  // Reemplaza con tu valor real
-                $yk = 20248;  // Reemplaza con tu valor real (año y semana)
- */
-       /*          $query = "
-                SELECT EMPL_NAME,
-                FULL_NAME
-                FROM RPS.EMPLOYEE;
-                  "; */
-/* 
-                $empleados = consultaOracle(3, $query);
+                //  método para obtener empleados
+                //$empleados = Tiendas(); //  obtener los empleados
 
-                foreach ($empleados as $empleado) {
+                /* foreach ($empleados as $empleado) {
                     echo "<tr>";
-                    echo "<td>{$empleado['CODIGO']}</td>";
-                    echo "<td>{$empleado['NOMBRE']}</td>";
+                    echo "<td>{$empleado['codigo']}</td>";
+                    echo "<td>{$empleado['nombre']}</td>";
 
                     foreach ($dias as $dia) {
-                        $inputIdBase = "{$empleado['CODIGO']}_$dia";
+                        $inputIdBase = "{$empleado['codigo']}_$dia";
                         echo "<td>
-                            <input type='text' id='entrada_$inputIdBase' oninput='formatTimeInput(this)' onblur='finalizeTimeInput(this); calcularHoras({$empleado['CODIGO']}, \"$dia\")' placeholder='HHMM'>
+                            <input type='text' id='entrada_$inputIdBase' oninput='formatTimeInput(this)' onblur='finalizeTimeInput(this); calcularHoras({$empleado['codigo']}, \"$dia\")' placeholder='HHMM'>
                             </td>";
                         echo "<td>
-
-                            <input type='text' id='salida_$inputIdBase' oninput='formatTimeInput(this)' onblur='finalizeTimeInput(this); calcularHoras({$empleado['CODIGO']}, \"$dia\")' placeholder='HHMM'>
+                            <input type='text' id='salida_$inputIdBase' oninput='formatTimeInput(this)' onblur='finalizeTimeInput(this); calcularHoras({$empleado['codigo']}, \"$dia\")' placeholder='HHMM'>
                             </td>";
                         echo "<td><span id='horas_$inputIdBase'>0</span></td>";
                     }
 
-                    echo "<td><span id='totalHoras_{$empleado['CODIGO']}'>0</span></td>";
+                    echo "<td><span id='totalHoras_{$empleado['codigo']}'>0</span></td>";
                     echo "</tr>";
                 } */
                 ?>
@@ -173,3 +167,4 @@ require_once "../Funsiones/global.php";
     </form>
 </body>
 </html>
+
