@@ -68,6 +68,18 @@
 		return $con;
 	}
 
+			Function OracleRpro2() {
+				$connection = oci_connect('REPORTUSER', 'REPORT', '192.168.0.251:1521/RPROODS');
+				if (!$connection) {
+					$e = oci_error();
+					echo "Error al conectar a Oracle: " . $e['message'];
+					exit;
+				}
+				return $connection;
+			}
+
+
+
 
 
 	function Mysql()
