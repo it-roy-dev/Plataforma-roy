@@ -50,10 +50,11 @@ $(document).ready(function () {
       sbs = $('#subsidiaria').val();
       pagina = 'vts14';
     });
-//TESTING
+
+    //TESTING
     $('#9-82 a').on('click',function(){
       $('section.content').load('filtro_s.php');
-      $('#titulo').text('Resumen de desempeño semanal Vendedor TEST');
+      $('#titulo').text('Resumen de desempeño semanal Vendedor');
       sbs = $('#subsidiaria').val();
       pagina = 'rdst';
     });
@@ -82,20 +83,40 @@ $(document).ready(function () {
 
     $('#9-86 a').on('click',function(){
       $('section.content').load('metas.php');
-      $('#titulo').text('Asignacion de Metas TEST');
+      $('#titulo').text('Asignacion de Horarios');
       sbs = $('#Tiendas').val();
       pagina = 'metas';
+    });
+
+    $('#9-87 a').on('click',function(){
+      $('section.content').load('horarios.php');
+      $('#titulo').text('Reporte Horarios');
+      sbs = $('#Tiendas').val();
+      pagina = 'horarios';
+    });
+
+
+    $('#9-89 a').on('click',function(){
+      $('section.content').load('horarios.php');
+      $('#titulo').text('clientes');
+      sbs = $('#tiendas').val();
+      pagina = 'horarios';
     });
     
 
 
-/*     
-    $('#9-86 a').on('click',function(){
-      $('section.content').load('supervision/metas.php');
-      $('#titulo').text('asignacion metas');
-      // sbs = $('#subsidiaria').val();
-      pagina = 'metas';
-    }); */
+    
+     // SERVICIO AL CLIENTE 
+
+     $('#7-61 a').on('click',function(){
+      $('section.content').load('clientes.php');
+      $('#titulo').text('Busqueda de Clientes');
+      sbs = $('#Tiendas').val();
+      pagina = 'clientes';
+    });
+
+ 
+
 
     $('#9-88 a').on('click',function(){
       $('section.content').load('supervision/crudUsuario.php');
@@ -227,6 +248,7 @@ $(document).ready(function () {
       }
     });
   });
+   
 
     // OPERACIONES TIENDAS
 
