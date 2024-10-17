@@ -26,7 +26,6 @@ sort($tiendas);
 ?>
 <div class="container-fluid shadow rounded py-3 px-4">
   <?php
-
   foreach ($tiendas as $tienda) {
 
     foreach ($semanas as $semana) {
@@ -114,7 +113,7 @@ select	               A.STORE_CODE TIENDA,
                        inner join rps.document_item t2 on (t1.sid = t2.doc_sid)
                        inner join rps.store st on t1.store_no = st.store_no 
                         INNER JOIN  rps.subsidiary s on st.sbs_sid=s.sid AND t1.SBS_NO = S.SBS_NO 
-					   LEFT JOIN ROY_META_SEMANA A ON  TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = A.SEMANA AND TO_CHAR(T1.CREATED_DATETIME,'IYYY') = A.ANIO AND T1.STORE_NO = A.TIENDA AND t1.employee1_login_name = A.CODIGO_EMPLEADO AND T1.SBS_NO = A.SBS
+					   LEFT JOIN ROY_META_SEM_X_VENDEDOR A ON  TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = A.SEMANA AND TO_CHAR(T1.CREATED_DATETIME,'IYYY') = A.ANIO AND T1.STORE_NO = A.TIENDA AND t1.employee1_login_name = A.CODIGO_EMPLEADO AND T1.SBS_NO = A.SBS
 					   left join rps.employee e on (e.empl_name=t1.employee1_login_name)
 					   where 1=1
 					   and t1.status=4 
@@ -135,7 +134,7 @@ select	               A.STORE_CODE TIENDA,
       $cnt=1;
    
   ?>
-      <h3 class="text-center font-weight-bold text-primary">supervisor: <?php echo $tienda; ?><br><small class="h6 text-primary font-weight-bold text-center"><?php echo "| Año: " . substr($semana, 0, 4) . " | Semana: " . substr($semana, -2) . " | Meta Semana: Q " . number_format(MTSS($tienda, substr($semana, -2), substr($semana, 0, 4), $sbs)[0], 2) . " |" ?></small></br></h3>
+      <h3 class="text-center font-weight-bold text-primary">supervisor: <?php echo $tienda; ?><br><small class="h4 text-primary font-weight-bold text-center"><?php echo "| Año: " . substr($semana, 0, 4) . " | Semana: " . substr($semana, -2) . " | Meta Semana: Q " . number_format(MTSS($tienda, substr($semana, -2), substr($semana, 0, 4), $sbs)[0], 2) . " |" ?></small></br></h3>
     
       <table style="font-size:14px;" class="table table-hover table-sm tbrdst">
         <thead class="bg-primary">

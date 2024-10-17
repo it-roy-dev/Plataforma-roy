@@ -52,7 +52,8 @@ sort($tiendas);
 										   select  t1.store_NO, trunc(t1.created_datetime) FECHA, t1.employee1_login_name COD_VENDEDOR, 
 										   
 										   t1.employee1_full_name VENDEDOR,
-										   MAX((SELECT STORE_NAME FROM RPS.STORE  WHERE STORE_NO = s.store_no AND ADDRESS1 IS NOT NULL )) NOMBRETIENDA,
+                       s.store_name NOMBRETIENDA,
+										   --MAX((SELECT STORE_NAME FROM RPS.STORE  WHERE STORE_NO = s.store_no AND ADDRESS1 IS NOT NULL )) NOMBRETIENDA,
 										   case when t1.receipt_type=0 then 1 when t1.receipt_type=1 then -1 end TRANSACCIONES, 
 										   
 										   sum(case when t1.receipt_type=0 and t2.vend_code='001' then (t2.qty)
@@ -93,15 +94,15 @@ sort($tiendas);
 						and t1.sbs_no = $sbs
                         and S.UDF1_STRING in($tienda)
 					
-						and t1.CREATED_DATETIME between to_date('sysdate 00:00:00', 'YYYY-MM-DD HH24:MI:SS') ANd to_date('sysdate 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+						and t1.CREATED_DATETIME between to_date('$fi 00:00:00', 'DD/MM/YYYY HH24:MI:SS') ANd to_date('$ff 23:59:59', 'DD/MM/YYYY HH24:MI:SS')
 						
-						group by t1.store_NO,  t1.employee1_login_name, t1.employee1_full_name, trunc(t1.created_datetime), T1.DOC_NO, t1.receipt_type, t1.disc_amt
+						group by s.store_name, t1.store_NO,  t1.employee1_login_name, t1.employee1_full_name, trunc(t1.created_datetime), T1.DOC_NO, t1.receipt_type, t1.disc_amt
 							)A 
 							 
 							INNER JOIN 
                               
 							(SELECT * FROM ROY_META_DIARIA
-			   WHERE FECHA  between to_date('sysdate 00:00:00', 'YYYY-MM-DD HH24:MI:SS') ANd to_date('sysdate 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))MT
+			   WHERE FECHA  between to_date('$fi 00:00:00', 'DD/MM/YYYY HH24:MI:SS') ANd to_date('$ff 23:59:59', 'DD/MM/YYYY HH24:MI:SS'))MT
 			   ON A.STORE_NO = MT.TIENDA AND A.FECHA = MT.FECHA 
 			   GROUP BY A.STORE_NO, MT.META_S_IVA,A.NOMBRETIENDA
 			   ORDER BY A.STORE_NO";

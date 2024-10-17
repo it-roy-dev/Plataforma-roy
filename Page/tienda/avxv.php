@@ -97,7 +97,7 @@ sort($tiendas);
 							 
 					   from rps.document t1 
                        inner join rps.document_item t2 on (t1.sid = t2.doc_sid)
-					   LEFT JOIN ROY_META_SEMANA A ON  TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = A.SEMANA AND TO_CHAR(T1.CREATED_DATETIME,'IYYY') = A.ANIO AND T1.STORE_NO = A.TIENDA AND t1.employee1_login_name = A.CODIGO_EMPLEADO AND T1.SBS_NO = A.SBS
+					   LEFT JOIN ROY_META_SEM_X_VENDEDOR A ON  TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = A.SEMANA AND TO_CHAR(T1.CREATED_DATETIME,'IYYY') = A.ANIO AND T1.STORE_NO = A.TIENDA AND t1.employee1_login_name = A.CODIGO_EMPLEADO AND T1.SBS_NO = A.SBS
 					   left join rps.employee e on (e.empl_name=t1.employee1_login_name)
 					   where 1=1
 					   and t1.status=4 

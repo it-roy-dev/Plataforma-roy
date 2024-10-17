@@ -59,10 +59,11 @@ sort($tiendas);
                        CONTRATACION,
                         HORA
 					   FROM (
-					   select  t1.store_code, trunc(t1.created_datetime) FECHA, t1.employee1_login_name COD_VENDEDOR, J.SID SID_PUESTO,
-					   J.JOB_NAME PUESTO, A.META,A.HORA,
+					   select  t1.store_code, trunc(t1.created_datetime) FECHA, t1.employee1_login_name COD_VENDEDOR,
+					  A.META,A.HORA,
 					   t1.employee1_full_name VENDEDOR,
-					   E.HIRE_dATE CONTRATACION,
+                       E.FECHA_INGRESO CONTRATACION,
+					   E.PUESTO,
 					   case when t1.receipt_type=0 then 1 when t1.receipt_type=1 then -1 end TRANSACCIONES, 
 					   
 					   sum(case when t1.receipt_type=0 and t2.vend_code='001' then (t2.qty)
@@ -96,9 +97,9 @@ sort($tiendas);
 							 
 					   from rps.document t1 
                        inner join rps.document_item t2 on (t1.sid = t2.doc_sid)
-					   LEFT JOIN ROY_META_SEMANA A ON  TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = A.SEMANA AND TO_CHAR(T1.CREATED_DATETIME,'IYYY') = A.ANIO AND T1.STORE_NO = A.TIENDA AND t1.employee1_login_name = A.CODIGO_EMPLEADO AND T1.SBS_NO = A.SBS
-					   left join rps.employee e on (e.empl_name=t1.employee1_login_name)
-              LEFT join rps.job J ON E.JOB_SID = J.SID
+					   LEFT JOIN ROY_META_SEM_X_VENDEDOR A ON  TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = A.SEMANA AND TO_CHAR(T1.CREATED_DATETIME,'IYYY') = A.ANIO AND T1.STORE_NO = A.TIENDA AND t1.employee1_login_name = A.CODIGO_EMPLEADO AND T1.SBS_NO = A.SBS
+					   left join ROY_VENDEDORES_FRIED E on (E.CODIGO_VENDEDOR = t1.employee1_login_name)
+                       
 					   where 1=1
 					   and t1.status=4 
                     and t1.employee1_full_name not in ('SYSADMIN')
@@ -108,16 +109,16 @@ sort($tiendas);
                           and EXTRACT(YEAR FROM t1.CREATED_dATETIME)|| TO_CHAR(trunc(T1.CREATED_DATETIME,'d'),'IW')+1 = '$semana'
                      --   and t1.CREATED_DATETIME between to_date('2024-05-26 00:00:00', 'YYYY-MM-DD HH24:MI:SS') ANd to_date('2024-06-01 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
 						
-						group by t1.store_code,  t1.employee1_login_name, t1.employee1_full_name, trunc(t1.created_datetime), T1.DOC_NO, t1.receipt_type, t1.disc_amt,J.JOB_NAME, J.SID, A.META, A.HORA, E.HIRE_dATE
-							   ORDER BY J.SID
+						group by t1.store_code,  t1.employee1_login_name, t1.employee1_full_name, trunc(t1.created_datetime), T1.DOC_NO, t1.receipt_type, t1.disc_amt,  A.META, A.HORA,E.PUESTO,E.FECHA_INGRESO
+							  
                  )A 
-							GROUP BY A.STORE_CODE, A.COD_VENDEDOR, A.VENDEDOR, PUESTO, META, CONTRATACION, HORA, A.SID_PUESTO
-							order by A.SID_PUESTO";
+							GROUP BY A.STORE_CODE, A.COD_VENDEDOR, A.VENDEDOR, META,  HORA, PUESTO, CONTRATACION
+                             ORDER BY DECODE(PUESTO, 'JEFE DE TIENDA', 1, 'SUB JEFE DE TIENDA', 2, 'ASESOR DE VENTAS', 3, 4)";
       $resultado = consultaOracle(3, $query);
       $cnt = 1;
 
   ?>
-      <h3 class="text-center font-weight-bold text-primary">Tienda no: <?php echo $tienda; ?><br><small class="h6 text-primary font-weight-bold text-center"><?php echo "| Año: " . substr($semana, 0, 4) . " | Semana: " . substr($semana, -2) . " | Meta tienda: Q " . number_format(MTS($tienda, substr($semana, -2), substr($semana, 0, 4), $sbs)[0], 2) . " |" ?></small></br></h3>
+      <h3 class="text-center font-weight-bold text-primary">Tienda no: <?php echo $tienda; ?><br><small class="h4 text-primary font-weight-bold text-center"><?php echo "| Año: " . substr($semana, 0, 4) . " | Semana: " . substr($semana, -2) . " | Meta tienda: Q " . number_format(MTS($tienda, substr($semana, -2), substr($semana, 0, 4), $sbs)[0], 2) . " |" ?></small></br></h3>
       
       <table style="font-size:14px;" class="table table-hover table-sm tbavxv">
         <thead class="bg-primary">

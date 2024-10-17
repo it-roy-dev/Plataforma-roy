@@ -4,7 +4,7 @@ require_once "../../Funsiones/global.php";
 
 <div class="container shadow rounded py-3 px-4">
   <center>
-    <button class="btn btn-success btn-lg btnCrearUsuario"> <i class="fas fa-user-plus"></i> Crear usuario</button>
+    <button class="btn btn-success btn-lg btnCrearUsuario"> <i class="fas fa-user-plus"></i> Crear Vendedor</button>
   </center>
   <table id="tblUsuario" class="table table-sm table-hover">
     <thead>
@@ -117,7 +117,7 @@ require_once "../../Funsiones/global.php";
               <label for="perfil">Perfil</label>
               <select name="perfil" id="perfil" class="form-control" required>
                 <option selected></option>
-                <?php listadoPerfil() ?>
+                <?php listadoPerfiltds() ?>
               </select>
             </div>
             <div class="col">

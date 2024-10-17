@@ -97,10 +97,10 @@ $(document).ready(function () {
 
 
     $('#9-89 a').on('click',function(){
-      $('section.content').load('horarios.php');
-      $('#titulo').text('clientes');
+      $('section.content').load('metashorarios.php');
+      $('#titulo').text('Metas Semanal');
       sbs = $('#tiendas').val();
-      pagina = 'horarios';
+      pagina = 'metashorarios';
     });
     
 

@@ -181,13 +181,13 @@ select	               A.STORE_CODE TIENDA,
     return consultaOracle(1, $query);
   }
 
-  function MTS ($t,$s,$a,$sbs){
+  function MTS ($t,$s,$a, $sbs){
     $res = [0];
 
-    $query = "SELECT ROUND(SUM(META_S_IVA),2) META FROM roy_meta_diaria
+    $query = "SELECT  META FROM ROY_META_SEM_TDS
               WHERE TIENDA = $t
               AND SEMANA = $s
-              AND EXTRACT(YEAR FROM FECHA) =$a 
+              AND ANIO =$a
               ";
 
     $resultado = consultaOracle(1, $query);

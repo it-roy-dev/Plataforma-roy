@@ -2,6 +2,7 @@
     session_start();
     require_once "conexion.php";
 
+
     function consulta($op, $query){
         switch ($op) {
             case 1:
@@ -52,30 +53,7 @@
       return $resultado;
       oci_free_statement($consulta);
     }
-    function consultaOracleRpro($opcion,$query){
 
-    switch ($opcion) {
-      case 1:
-        $consulta = oci_parse(OracleRpro(),$query);
-        oci_execute($consulta);
-        $resultado = oci_fetch_row($consulta);
-        break;
-      case 2:
-        $consulta = oci_parse(OracleRpro(), $query);
-        $resultado = oci_execute($consulta);
-        break;
-      case 3:
-        $consulta = oci_parse(OracleRpro(), $query);
-        oci_execute($consulta);
-        $resul = oci_fetch_all($consulta,$res,null,null, OCI_FETCHSTATEMENT_BY_ROW + OCI_NUM);
-        $resultado = $res;
-        break;
-      default:
-        break;
-    }
-    return $resultado;
-    oci_free_statement($consulta);
-  }
 
     function registroLog($consulta,$explicacion="Sin comentarios"){
       $id_session = isset($_SESSION['user']) ? $_SESSION['user'][0] : '';

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,9 +38,9 @@
             <input type="hidden" id="semana" name="semana">
         </div>
         <!-- Tabla de empleados -->
-        <div class="mt-4">
+        <div class="table-responsive">
             <i class="fas fa-users"></i> Empleados Asignados:
-            <table id="empleadosTable" class="table table-bordered table-striped">
+            <table id="empleadosTable" class="table table-hover table-sm tbrdst">
                 <thead class="thead-dark">
                     <tr>
                         <th>CÓDIGO</th>
@@ -321,8 +320,8 @@ $('#form-horarios').submit(function(event) {
         var totalHorasExtras = 0;
         var totalHorasAlmuerzo = 0;
 
-        // Iterar sobre cada fila de empleado
-        $('#empleadosTable tbody tr').each(function() {
+         // Iterar sobre cada fila de empleado
+         $('#empleadosTable tbody tr').each(function() {
             var totalEmpleado = 0;
             var dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 

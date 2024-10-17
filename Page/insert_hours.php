@@ -1,7 +1,7 @@
 <?php
 include_once '../Funsiones/conexion.php';  // Incluye el archivo de conexión con Oracle
 
-$conn = Oracle();  // función Oracle para obtener la conexión OCI8
+$conn = Oracle();  //  función Oracle para obtener la conexión OCI8
 
 if (!$conn) {
     error_log("Error de conexión a la base de datos.");
@@ -57,12 +57,9 @@ if (isset($_GET['action'])) {
         $store_no = $_GET['store_no'];
         error_log("Obteniendo empleados para la tienda: $store_no");
 
-        $query = "SELECT E.EMPL_NAME, E.FULL_NAME 
-                  FROM RPS.EMPLOYEE E 
-                  INNER JOIN RPS.STORE S 
-                  ON E.BASE_STORE_SID = S.SID 
-                  WHERE S.STORE_NO = :store_no AND E.ACTIVE = 1 
-                  ORDER BY E.EMPL_NAME";
+        $query = "SELECT CODIGO_VENDEDOR EMPL_NAME, NOMBRE FULL_NAME FROM ROY_VENDEDORES_FRIED
+                  WHERE TIENDA = :store_no AND ACTIVO = 1
+                   ORDER BY DECODE(PUESTO, 'JEFE DE TIENDA', 1, 'SUB JEFE DE TIENDA', 2, 'ASESOR DE VENTAS', 3, 4) ";
           $stmt = oci_parse($conn, $query);
           oci_bind_by_name($stmt, ':store_no', $store_no);
       

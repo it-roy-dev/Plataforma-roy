@@ -46,7 +46,7 @@ sort($tiendas);
     $consulta = consultaOracle(3,$query);
 
   ?>
-    <h3 class="text-center font-weight-bold text-primary">Tienda no: <?php echo $tie; ?><br><small class="h6 text-primary text-center"><?php echo "( " . date('d/m/Y', strtotime($fi)) . " --al-- " . date('d/m/Y', strtotime($ff)) . " )" ?></small></br></h3>
+    <h3 class="text-center font-weight-bold text-primary">Tienda no: <?php echo $tie; ?><br><small class="h4 text-primary text-center"><?php echo "( " . date('d/m/Y', strtotime($fi)) . " --al-- " . date('d/m/Y', strtotime($ff)) . " )" ?></small></br></h3>
 
     <table style="font-size:14px;" class="table table-hover table-sm tbrtt">
       <thead class="bg-primary">

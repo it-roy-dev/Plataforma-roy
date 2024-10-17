@@ -184,7 +184,7 @@ select	               A.STORE_CODE TIENDA,
   function MTS ($t,$s,$a,$sbs){
     $res = [0];
 
-    $query = "SELECT ROUND(SUM(META_S_IVA),2) META FROM roy_meta_diaria
+    $query = "SELECT ROUND(SUM(META_S_IVA),2) META FROM ROY_META_DIARIA_TDS
               WHERE TIENDA = $t
               AND SEMANA = $s
               AND EXTRACT(YEAR FROM FECHA) =$a 
@@ -202,10 +202,13 @@ select	               A.STORE_CODE TIENDA,
   function MTSS ($t,$s,$a,$sbs){
     $res = [0];
 
-    $query = "SELECT ROUND(SUM(META_S_IVA),2) META FROM roy_meta_diaria
-              WHERE COD_SUPER = $t
-              AND SEMANA = $s
-              AND ANIO =$a 
+    $query = "SELECT ROUND(SUM(META),2) META FROM ROY_META_SEM_TDS M
+                            INNER JOIN RPS.STORE S ON M.TIENDA = S.STORE_NO 
+                            INNER JOIN  rps.subsidiary SB on s.sbs_sid=sB.sid AND M.SBS = SB.SBS_NO 
+                            WHERE SB.SBS_NO = $sbs
+                            AND S.UDF1_STRING = $t
+              AND M.SEMANA = $s
+              AND M.ANIO =$a
               ";
 
     $resultado = consultaOracle(1, $query);
