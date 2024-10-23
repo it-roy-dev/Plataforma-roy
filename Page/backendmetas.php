@@ -66,8 +66,10 @@ if (isset($_GET['action'])) {
                 WHERE S.STORE_NO = :store_no
                 AND MT.SEMANA = :semana
                 AND MT.ANIO = :anio   
-                group by  VF.CODIGO_VENDEDOR , VF.NOMBRE , VF.PUESTO , MT.META, cd.hora
-                ORDER BY DECODE(VF.PUESTO, 'JEFE DE TIENDA', 1, 'SUB JEFE DE TIENDA', 2, 'ASESOR DE VENTAS', 3, 4)";
+                group by  VF.CODIGO_VENDEDOR , VF.NOMBRE , VF.PUESTO , MT.META, cd.hora ,VF.FECHA_INGRESO
+                ORDER BY DECODE(VF.PUESTO, 'JEFE DE TIENDA', 1, 'SUB JEFE DE TIENDA', 2, 'ASESOR DE VENTAS', 3, 4),
+                VF.FECHA_INGRESO ASC";
+
 
 
 
@@ -123,8 +125,7 @@ if (isset($_GET['action'])) {
                         echo json_encode(['error' => 'Faltan parámetros necesarios']);
                     }
                     break;
-                
-                
+
          case 'update_meta':
                     $employee_name = $_POST['employee_name'];
                     $meta = $_POST['meta'];
@@ -135,19 +136,33 @@ if (isset($_GET['action'])) {
                     $hora = $_POST['hora'];
 
                     $query = "DECLARE
-                                  v_count NUMBER;
-                              BEGIN
-                                  SELECT COUNT(*) INTO v_count FROM ROY_META_SEM_X_VENDEDOR
-                                  WHERE CODIGO_EMPLEADO = :employee_name AND TIENDA = :store_no AND SEMANA = :semana AND ANIO = :anio;
+                                        v_count NUMBER;
+                                    BEGIN
+                                        -- Verificar si ya existe el registro
+                                        SELECT COUNT(*) INTO v_count 
+                                        FROM ROY_META_SEM_X_VENDEDOR
+                                        WHERE CODIGO_EMPLEADO = :employee_name 
+                                        AND TIENDA = :store_no 
+                                        AND SEMANA = :semana 
+                                        AND ANIO = :anio;
 
-                                  IF v_count > 0 THEN
-                                      DELETE FROM ROY_META_SEM_X_VENDEDOR
-                                      WHERE CODIGO_EMPLEADO = :employee_name AND TIENDA = :store_no AND SEMANA = :semana AND ANIO = :anio;
-                                  END IF;
+                                        -- Eliminar si existe (v_count >= 1)
+                                        IF v_count >= 1 THEN
+                                            DELETE FROM ROY_META_SEM_X_VENDEDOR
+                                            WHERE CODIGO_EMPLEADO = :employee_name 
+                                            AND TIENDA = :store_no 
+                                            AND SEMANA = :semana 
+                                            AND ANIO = :anio;
+                                        END IF;
 
-                                  INSERT INTO ROY_META_SEM_X_VENDEDOR (TIENDA, CODIGO_EMPLEADO, META, SEMANA, TIPO, ANIO, HORA, SBS)
-                                  VALUES (:store_no, :employee_name, :meta, :semana, :tipo, :anio, :hora, '1');
-                              END;";
+                                        -- Insertar el nuevo registro
+                                        INSERT INTO ROY_META_SEM_X_VENDEDOR 
+                                            (TIENDA, CODIGO_EMPLEADO, META, SEMANA, TIPO, ANIO, HORA, SBS)
+                                        VALUES 
+                                            (:store_no, :employee_name, :meta, :semana, :tipo, :anio, :hora, '1');
+
+                                        COMMIT;
+                                    END;";
 
                     $stmt = oci_parse($conn, $query);
                     oci_bind_by_name($stmt, ':meta', $meta);
@@ -193,8 +208,7 @@ if (isset($_GET['action'])) {
                             $meta_value = $meta['meta'];
                             $hours = $meta['hours'];
                             $tipo = $meta['tipo'];
-                            $sbs = '1'; // Asumiendo que tienes un valor por defecto para SBS
-                    
+                            $sbs = '1';
                             // Primero elimina los registros existentes
                             $deleteQuery = "DELETE FROM ROY_META_SEM_X_VENDEDOR WHERE CODIGO_EMPLEADO = :employeeCode AND TIENDA = :store_no AND SEMANA = :semana AND ANIO = :anio";
                             $stmtDelete = oci_parse($conn, $deleteQuery);
