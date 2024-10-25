@@ -103,6 +103,13 @@ $(document).ready(function () {
       pagina = 'metashorarios';
     });
     
+    
+    $('#9-90 a').on('click',function(){
+      $('section.content').load('supervision/crud.php');
+      $('#titulo').text('Crud Usuarios');
+
+    });
+    
 
 
     

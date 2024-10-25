@@ -1,6 +1,5 @@
 <?php
 include_once '../Funsiones/conexion.php';
-include_once '../Funsiones/tienda/queryRpro.php';
 
 $conn = Oracle();
 
