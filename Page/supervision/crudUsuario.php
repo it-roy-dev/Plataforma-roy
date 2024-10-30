@@ -19,8 +19,6 @@ require_once "../../Funsiones/global.php";
       <th>Código</th>
       <th>Foto</th>
       <th>Fecha Creacion</th>
-      <th>IdDepartamento</th>
-      <th>Departamento</th>
       <th>IdPerfil</th>
       <th>Perfil</th>
       <th>IdPais</th>
