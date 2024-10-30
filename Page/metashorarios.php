@@ -9,6 +9,10 @@
 <div class="container mt-5">
     <h3 class="text-center"><i class="fas fa-chart-area"></i> Asignacion de Metas Semanal</h3>
     <form id="form-horarios" method="POST">
+    <div class="form-group">
+            <label for="week_number"><i class="fas fa-calendar-week"></i> Ingrese el número de semana:</label>
+            <input type="number" id="week_number" name="week_number" class="form-control" min="1" max="52" placeholder="Número de semana" required>
+        </div>
         <div class="form-group">
             <label for="employee_code"><i class="fas fa-user"></i> Seleccione Supervisor:</label>
             <select id="employee_code" name="employee_code" class="form-control" required>
@@ -25,10 +29,7 @@
             <label for="year"><i class="fas fa-calendar-alt"></i> Ingrese el año:</label>
             <input type="number" id="year" name="year" class="form-control" min="2000" max="3000" value="2024" required>
         </div>
-        <div class="form-group">
-            <label for="week_number"><i class="fas fa-calendar-week"></i> Ingrese el número de semana:</label>
-            <input type="number" id="week_number" name="week_number" class="form-control" min="1" max="52" placeholder="Número de semana" required>
-        </div>
+        
     </form>
 </div>
 <div class="container mt-5">

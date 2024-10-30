@@ -15,10 +15,14 @@
 </head>
 <body>
   <div class="container mt-5">
-
     <div class="form-group">
-      <input type="text" id="searchInput" class="form-control" placeholder="Buscar en todos los campos...">
+    <button class="btn btn-success btn-lg btnCrearVendedor"> <i class="fas fa-user-plus"></i> Crear Vendedor</button>
     </div>
+    <div class="form-group">
+      <input type="text" id="searchInput" class="form-control" placeholder="Buscar Empleados...">
+    </div>
+    <input type="text" id="searchTienda" placeholder="Buscar por número de tienda" class="form-control mb-3">
+
 
     <table id="tblVendedores" class="table table-bordered table-hover">
       <thead class="thead-dark">
@@ -49,16 +53,31 @@
       $(document).ready(function () {
         cargarVendedores();
 
-        $('#searchInput').on('input', function () {
-          const searchValue = $(this).val().toLowerCase();
-          const filteredData = vendedores.filter(vendedor =>
-            Object.values(vendedor).some(value =>
-              value.toString().toLowerCase().includes(searchValue)
-            )
-          );
-          renderTable(filteredData);
-          setupPagination(filteredData);
-        });
+        // Búsqueda general
+      $('#searchInput').on('input', function () {
+        const searchValue = $(this).val().toLowerCase();
+        filtrarYRenderizar();
+      });
+
+      // Búsqueda por tienda
+      $('#searchTienda').on('input', function () {
+        filtrarYRenderizar();
+      });
+
+      function filtrarYRenderizar() {
+        const searchValueGeneral = $('#searchInput').val().toLowerCase();
+        const searchValueTienda = $('#searchTienda').val().toLowerCase();
+
+        const filteredData = vendedores.filter(vendedor =>
+          vendedor.TIENDA_NO.toString().toLowerCase().includes(searchValueTienda) &&
+          Object.values(vendedor).some(value =>
+            value.toString().toLowerCase().includes(searchValueGeneral)
+          )
+        );
+
+        renderTable(filteredData);
+        setupPagination(filteredData);
+      }
 
         function cargarVendedores() {
           $.ajax({
@@ -85,6 +104,8 @@
           const pageData = data.slice(start, end);
 
           pageData.forEach(vendedor => {
+            const estadoTexto = vendedor.ACTIVO === 'Sí' ? 'Desactivar' : 'Activar';
+            const botonClase = vendedor.ACTIVO === 'Sí' ? 'btn-danger' : 'btn-success';
             const row = `
               <tr>
                 <td>${vendedor.TIENDA_NO}</td>
@@ -93,10 +114,10 @@
                 <td>${vendedor.PUESTO}</td>
                 <td>${vendedor.ACTIVO}</td>
                 <td>${vendedor.FECHA_INGRESO}</td>
-                <td>
-                  <button class="btn btn-primary btn-sm btnEditar" data-id="${vendedor.CODIGO_VENDEDOR}">Editar</button>
-                  <button class="btn btn-danger btn-sm btnDesactivar" data-id="${vendedor.CODIGO_VENDEDOR}">Desactivar</button>
-                </td>
+              <td>
+                <button class="btn btn-primary btn-sm btnEditar" data-id="${vendedor.CODIGO_VENDEDOR}">Editar</button>
+                <button class="btn ${botonClase} btn-sm btnToggleStatus" data-id="${vendedor.CODIGO_VENDEDOR}">${estadoTexto}</button>
+              </td>
               </tr>`;
             tbody.append(row);
           });
@@ -122,31 +143,140 @@
           });
         }
 
-        $(document).on('click', '.btnEditar', function () {
-          const id = $(this).data('id');
-          const vendedor = vendedores.find(v => v.CODIGO_VENDEDOR == id);
+        $('.btnCrearVendedor').click(function() {
           Swal.fire({
-            title: 'Editar Vendedor',
+            title: 'Crear Nuevo Vendedor',
             html: `
-              Numero tienda:<input type="text" id="tienda" class="swal2-input" placeholder="Número de tienda" value="${vendedor.TIENDA_NO}">
-             Código de Empleado: <input type="number" id="codigo_vendedor" class="swal2-input" placeholder="Número de tienda" value="${vendedor.CODIGO_VENDEDOR}">
-             Nombre de Empleado:<input type="text" id="nombre" class="swal2-input" placeholder="Número de tienda" value="${vendedor.NOMBRE}">
-              Puesto de Empleado:<input type="text" id="puesto" class="swal2-input" placeholder="Puesto" value="${vendedor.PUESTO}">
-              Fecha de Ingreso:<input type="date" id="fecha_ingreso" class="swal2-input" placeholder="Número de tienda" value="${vendedor.FECHA_INGRESO}">
-
+              <input type="text" id="tienda" class="swal2-input" placeholder="Número de tienda">
+              <input type="text" id="codigo_vendedor" class="swal2-input" placeholder="Código Vendedor">
+              <input type="text" id="nombre" class="swal2-input" placeholder="Nombre">
+              <select id="puesto" class="swal2-input">
+                <option value="JEFE DE TIENDA">Jefe de Tienda</option>
+                <option value="SUB JEFE DE TIENDA">Sub Jefe de Tienda</option>
+                <option value="ASESOR DE VENTAS">Asesor de Ventas</option>
+                <option value="VACACIONISTA">Vacacionista</option>
+                <option value="TEMPORAL">Temporal</option>
+              </select>
+              <input type="date" id="fecha_ingreso" class="swal2-input" placeholder="Fecha de Ingreso">
+              <input type="checkbox" id="activo" class="swal2-input" checked> Activo
             `,
             focusConfirm: false,
             preConfirm: () => {
-              const tienda = Swal.getPopup().querySelector('#tienda').value;
-              const puesto = Swal.getPopup().querySelector('#puesto').value;
-              if (!tienda || !puesto) {
-                Swal.showValidationMessage('Por favor ingrese ambos valores');
-              }
-              return { tienda, puesto };
+              return {
+                tienda: $('#tienda').val(),
+                codigo_vendedor: $('#codigo_vendedor').val(),
+                nombre: $('#nombre').val(),
+                puesto: $('#puesto').val(),
+                fecha_ingreso: $('#fecha_ingreso').val(),
+                activo: $('#activo').is(':checked') ? 1 : 0
+              };
+            },
+            confirmButtonText: 'Crear Vendedor',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const { tienda, codigo_vendedor, nombre, puesto, fecha_ingreso, activo } = result.value;
+              $.ajax({
+                url: './supervision/crudVendedores.php?action=add_employee',
+                type: 'POST',
+                data: {
+                  tienda_no: tienda,
+                  codigo_vendedor: codigo_vendedor,
+                  nombre: nombre,
+                  puesto: puesto,
+                  fecha_ingreso: fecha_ingreso,
+                  activo: activo
+                },
+                success: function(response) {
+                  response = JSON.parse(response); // Asegúrate de convertir la respuesta a un objeto JSON
+                  if (response.success) {
+                    Swal.fire('Éxito', 'Vendedor creado correctamente.', 'success');
+                    cargarVendedores();
+                  } else {
+                    Swal.fire('Error', 'No se pudo crear el vendedor. ' + response.error.message, 'error');
+                  }
+                },
+                error: function(xhr, status, error) {
+                  Swal.fire('Error', 'Error al conectar con el servidor: ' + error, 'error');
+                }
+              });
+            }
+          });
+        });
+
+        $(document).on('click', '.btnEditar', function () {
+          const id = $(this).data('id');
+          const vendedor = vendedores.find(v => v.CODIGO_VENDEDOR == id);
+
+          Swal.fire({
+                title: 'Editar Vendedor',
+                html: `
+            <label for="tienda">Número de tienda:</label>
+            <input type="text" id="tienda" class="swal2-input" placeholder="Número de tienda" value="${vendedor.TIENDA_NO}">
+            
+            <label for="codigo_vendedor">Código Vendedor:</label>
+            <input type="number" id="codigo_vendedor" class="swal2-input" placeholder="Código Vendedor" value="${vendedor.CODIGO_VENDEDOR}">
+            
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" value="${vendedor.NOMBRE}">
+            
+            <label for="puesto">Puesto:</label>
+            <select id="puesto" class="swal2-input">
+            <option value="JEFE DE TIENDA" ${vendedor.PUESTO === 'JEFE DE TIENDA' ? 'selected' : ''}>Jefe de Tienda</option>
+            <option value="SUB JEFE DE TIENDA" ${vendedor.PUESTO === 'SUB JEFE DE TIENDA' ? 'selected' : ''}>Sub Jefe de Tienda</option>
+            <option value="ASESOR DE VENTAS" ${vendedor.PUESTO === 'ASESOR DE VENTAS' ? 'selected' : ''}>Asesor de Ventas</option>
+            </select>
+            
+            <label for="fecha_ingreso">Fecha de Ingreso:</label>
+            <input type="text" id="fecha_ingreso" class="swal2-input" value="${vendedor.FECHA_INGRESO}">
+          `,
+
+
+
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            preConfirm: () => {
+              return {
+                tienda: $('#tienda').val(),
+                codigo_vendedor: $('#codigo_vendedor').val(),
+                nombre: $('#nombre').val(),
+                puesto: $('#puesto').val(),
+                fecha_ingreso: $('#fecha_ingreso').val()
+              };
             }
           }).then((result) => {
             if (result.isConfirmed) {
-              actualizarVendedor(id, result.value);
+              const { tienda, codigo_vendedor, nombre, puesto, fecha_ingreso } = result.value;
+
+              $.ajax({
+              url: './supervision/crudVendedores.php?action=update_employee',
+              type: 'POST',
+              data: {
+                  tienda_no: $('#tienda').val(),
+                  codigo_vendedor: $('#codigo_vendedor').val(),
+                  nombre: $('#nombre').val(),  // Asegúrate de enviar este valor
+                  puesto: $('#puesto').val(),
+                  fecha_ingreso: $('#fecha_ingreso').val(),
+                  activo: vendedor.ACTIVO === 'Sí' ? 1 : 0
+              },
+              success: function(response) {
+                try {
+                    const result = JSON.parse(response);
+                    if (result.success) {
+                        Swal.fire('Éxito', 'Vendedor actualizado correctamente.', 'success');
+                        cargarVendedores();
+                    } else {
+                        Swal.fire('Error', 'No se pudo actualizar el vendedor: ' + result.error, 'error');
+                    }
+                } catch (e) {
+                    Swal.fire('Error', 'La respuesta del servidor no es válida.', 'error');
+                    console.error('Error parsing JSON:', response);
+                }
+            }
+
+          });
+
             }
           });
         });
@@ -171,35 +301,40 @@
             }
           });
         }
+        $(document).on('click', '.btnToggleStatus', function () {
+        const id = $(this).data('id');
+        const vendedor = vendedores.find(v => v.CODIGO_VENDEDOR == id);
+        const nuevoEstado = vendedor.ACTIVO === 'Sí' ? 0 : 1; // Alternar estado
+        const accion = nuevoEstado === 1 ? 'activado' : 'desactivado';
 
-        $(document).on('click', '.btnDesactivar', function () {
-          const id = $(this).data('id');
-          Swal.fire({
-            title: '¿Estás seguro?',
-            text: 'El vendedor será desactivado.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, desactivar'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              $.ajax({
-                url: './supervision/crudVendedores.php?action=update_employee',
-                type: 'POST',
-                data: { codigo_vendedor: id, activo: 0 },
-                success: function (response) {
-                  if (response === 'true') {
-                    Swal.fire('Desactivado', 'El vendedor ha sido desactivado.', 'success');
-                    cargarVendedores();
-                  } else {
-                    Swal.fire('Error', 'No se pudo desactivar al vendedor.', 'error');
-                  }
+        Swal.fire({
+          title: `¿Estás seguro de ${accion} este vendedor?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, continuar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: './supervision/crudVendedores.php?action=toggle_employee_status',
+              type: 'POST',
+              data: {
+                codigo_vendedor: id,
+                activo: nuevoEstado
+              },
+              success: function (response) {
+                if (response === 'true') {
+                  Swal.fire('Éxito', `El vendedor ha sido ${accion}.`, 'success');
+                  cargarVendedores();
+                } else {
+                  Swal.fire('Error', 'No se pudo actualizar el estado.', 'error');
                 }
-              });
-            }
-          });
+              }
+            });
+          }
         });
+      });
       });
     })();
   </script>

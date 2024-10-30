@@ -43,33 +43,94 @@ if (isset($_GET['action'])) {
             echo json_encode($employees);
             break;
 
-        case 'update_employee':
-            $codigo_vendedor = $_POST['codigo_vendedor'];
-            $tienda_no = $_POST['tienda_no'];
-            $puesto = $_POST['puesto'];
-            $activo = $_POST['activo'];
+            case 'update_employee':
+                $tienda_no = $_POST['tienda_no'];
+                $codigo_vendedor = $_POST['codigo_vendedor'];
+                $nombre = $_POST['nombre'];  // Asegúrate de recibir y utilizar este parámetro
+                $puesto = $_POST['puesto'];
+                $activo = $_POST['activo'];
+                $fecha_ingreso = $_POST['fecha_ingreso'];
+                $query = "UPDATE ROY_VENDEDORES_FRIED
+                SET tienda = :tienda_no, 
+                    nombre = :nombre,
+                    puesto = :puesto, 
+                    activo = :activo, 
+                    fecha_ingreso = TO_DATE(:fecha_ingreso, 'YYYY-MM-DD') 
+                WHERE codigo_vendedor = :codigo_vendedor";
+      
+            
+                $stmt = oci_parse($conn, $query);
+            
+                oci_bind_by_name($stmt, ':tienda_no', $tienda_no);
+                oci_bind_by_name($stmt, ':codigo_vendedor', $codigo_vendedor);
 
-            $query = "UPDATE ROY_VENDEDORES_FRIED 
-                      SET tienda = :tienda_no, 
-                          puesto = :puesto, 
-                          activo = :activo 
-                      WHERE codigo_vendedor = :codigo_vendedor";
-            $stmt = oci_parse($conn, $query);
+                oci_bind_by_name($stmt, ':nombre', $nombre);  // Vincula el nuevo nombre
+                oci_bind_by_name($stmt, ':puesto', $puesto);
+                oci_bind_by_name($stmt, ':activo', $activo);
+                oci_bind_by_name($stmt, ':fecha_ingreso', $fecha_ingreso);
+            
+                if (oci_execute($stmt)) {
+                    echo json_encode(['success' => true]);
+                } else {
+                    $error = oci_error($stmt);
+                    echo json_encode(['success' => false, 'error' => $error['message']]);
+                }
+                
+                oci_free_statement($stmt);
+                oci_close($conn);
+                break;
+            
 
-            oci_bind_by_name($stmt, ':tienda_no', $tienda_no);
-            oci_bind_by_name($stmt, ':puesto', $puesto);
-            oci_bind_by_name($stmt, ':activo', $activo);
-            oci_bind_by_name($stmt, ':codigo_vendedor', $codigo_vendedor);
+            case 'toggle_employee_status':
+                $codigo_vendedor = $_POST['codigo_vendedor'];
+                $activo = $_POST['activo'];
+            
+                $query = "UPDATE ROY_VENDEDORES_FRIED 
+                          SET activo = :activo 
+                          WHERE codigo_vendedor = :codigo_vendedor";
+            
+                $stmt = oci_parse($conn, $query);
+            
+                oci_bind_by_name($stmt, ':activo', $activo);
+                oci_bind_by_name($stmt, ':codigo_vendedor', $codigo_vendedor);
+            
+                if (oci_execute($stmt)) {
+                    echo 'true';
+                } else {
+                    echo 'false';
+                }
+            
+                oci_free_statement($stmt);
+                oci_close($conn);
+                break;
 
-            if (oci_execute($stmt)) {
-                echo 'true';
-            } else {
-                echo 'false';
-            }
+                case 'add_employee':
+                    $tienda_no = $_POST['tienda_no'];
+                    $codigo_vendedor = $_POST['codigo_vendedor'];
+                    $nombre = $_POST['nombre'];
+                    $puesto = $_POST['puesto'];
+                    $fecha_ingreso = $_POST['fecha_ingreso'];
+                
+                    $query = "INSERT INTO ROY_VENDEDORES_FRIED (SBS, tienda, codigo_vendedor, nombre, puesto, activo, fecha_ingreso)
+                              VALUES ('1', :tienda_no, :codigo_vendedor, :nombre, :puesto, '1', TO_DATE(:fecha_ingreso, 'YYYY-MM-DD'))";
+                    $stmt = oci_parse($conn, $query);
+                    oci_bind_by_name($stmt, ':tienda_no', $tienda_no);
+                    oci_bind_by_name($stmt, ':codigo_vendedor', $codigo_vendedor);
+                    oci_bind_by_name($stmt, ':nombre', $nombre);
 
-            oci_free_statement($stmt);
-            oci_close($conn);
-            break;
+                    oci_bind_by_name($stmt, ':puesto', $puesto);
+                    oci_bind_by_name($stmt, ':fecha_ingreso', $fecha_ingreso);
+                
+                    $response = oci_execute($stmt);
+                    if ($response) {
+                        echo json_encode(['success' => true]);
+                    } else {
+                        echo json_encode(['success' => false, 'error' => oci_error($stmt)]);
+                    }
+                    oci_free_statement($stmt);
+                    oci_close($conn);
+                    break;
+            
 
         default:
             http_response_code(400);

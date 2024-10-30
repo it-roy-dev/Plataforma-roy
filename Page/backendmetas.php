@@ -1,5 +1,6 @@
 <?php
 include_once '../Funsiones/conexion.php';
+include_once '../Funsiones/tienda/queryRpro.php';
 
 $conn = Oracle();
 
@@ -64,6 +65,7 @@ if (isset($_GET['action'])) {
                 LEFT JOIN ROY_META_SEM_X_VENDEDOR CD ON CD.CODIGO_EMPLEADO = vf.codigo_vendedor AND SB.SBS_NO = CD.SBS AND S.STORE_NO = CD.TIENDA AND MT.SEMANA = CD.SEMANA
                 WHERE S.STORE_NO = :store_no
                 AND MT.SEMANA = :semana
+                AND VF.ACTIVO = 1
                 AND MT.ANIO = :anio   
                 group by  VF.CODIGO_VENDEDOR , VF.NOMBRE , VF.PUESTO , MT.META, cd.hora ,VF.FECHA_INGRESO
                 ORDER BY DECODE(VF.PUESTO, 'JEFE DE TIENDA', 1, 'SUB JEFE DE TIENDA', 2, 'ASESOR DE VENTAS', 3, 4),
